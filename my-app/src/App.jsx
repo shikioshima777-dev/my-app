@@ -286,9 +286,7 @@ const NightView = ({ onModeSwitch }) => {
       style={{
         minHeight: "100vh", display: "flex", flexDirection: "column",
         position: "relative", overflow: "hidden",
-        background: "radial-gradient(ellipse at 30% 20%, #0f1b3d 0%, #060d1f 50%, #010408 100%)",
-backgroundAttachment: "fixed",
-        fontFamily: "'Noto Serif JP', Georgia, serif",
+        background: "radial-gradient(ellipse at 30% 20%, #0f1b3d 0%, #060d1f 50%, #010408 100%)", fontFamily: "'Noto Serif JP', Georgia, serif",
       }}
     >
       {/* StarField is outside the re-render boundary of text state */}
@@ -463,7 +461,7 @@ const MorningView = ({ onModeSwitch }) => {
   }
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "linear-gradient(160deg, #fff8f0 0%, #fef3e2 40%, #e8f4fd 100%)", backgroundAttachment: "fixed", fontFamily: "'Noto Serif JP', Georgia, serif" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "linear-gradient(160deg, #fff8f0 0%, #fef3e2 40%, #e8f4fd 100%)", fontFamily: "'Noto Serif JP', Georgia, serif" }}>
 
       <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px 20px 16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -571,18 +569,18 @@ export default function App() {
       <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&display=swap" rel="stylesheet" />
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { min-height: 100%; }
-        body { -webkit-font-smoothing: antialiased; }
-        textarea::placeholder { color: #2d4a6e; opacity: 0.65; }
-        @keyframes twinkle {
-          from { opacity: 0.1;  transform: scale(0.85); }
-          to   { opacity: 0.55; transform: scale(1.2); }
-        }
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(122,163,212,0.2); border-radius: 3px; }
-        button { transition: transform 0.15s, box-shadow 0.15s; }
-        button:active { transform: scale(0.95) !important; }
+html, body { min-height: 100%; width: 100%; }
+body { -webkit-font-smoothing: antialiased; }
+textarea::placeholder { color: #2d4a6e; opacity: 0.65; }
+@keyframes twinkle {
+  from { opacity: 0.1;  transform: scale(0.85); }
+  to   { opacity: 0.55; transform: scale(1.2); }
+}
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(122,163,212,0.2); border-radius: 3px; }
+button { transition: transform 0.15s, box-shadow 0.15s; }
+button:active { transform: scale(0.95) !important; }
       `}</style>
 
       <div style={{ opacity: transitioning ? 0 : 1, transition: "opacity 0.28s ease" }}>
