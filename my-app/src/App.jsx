@@ -287,6 +287,7 @@ const NightView = ({ onModeSwitch }) => {
         minHeight: "100vh", display: "flex", flexDirection: "column",
         position: "relative", overflow: "hidden",
         background: "radial-gradient(ellipse at 30% 20%, #0f1b3d 0%, #060d1f 50%, #010408 100%)",
+backgroundAttachment: "fixed",
         fontFamily: "'Noto Serif JP', Georgia, serif",
       }}
     >
@@ -462,7 +463,7 @@ const MorningView = ({ onModeSwitch }) => {
   }
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "linear-gradient(160deg, #fff8f0 0%, #fef3e2 40%, #e8f4fd 100%)", fontFamily: "'Noto Serif JP', Georgia, serif" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "linear-gradient(160deg, #fff8f0 0%, #fef3e2 40%, #e8f4fd 100%)", backgroundAttachment: "fixed", fontFamily: "'Noto Serif JP', Georgia, serif" }}>
 
       <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px 20px 16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -570,6 +571,7 @@ export default function App() {
       <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&display=swap" rel="stylesheet" />
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
         body { -webkit-font-smoothing: antialiased; }
         textarea::placeholder { color: #2d4a6e; opacity: 0.65; }
         @keyframes twinkle {
