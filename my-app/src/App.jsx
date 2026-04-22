@@ -184,6 +184,85 @@ const appendHistory = (record) => {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
 };
 
+// ─── Constellation data — real star patterns, subtly blended ─────────────────
+// Each constellation is positioned fixed on the viewport. Stars & lines use
+// viewBox 0-100 coordinates. We show several so that 1-3 are always visible.
+const CONSTELLATIONS = [
+  { // Orion (オリオン座)
+    id: "orion",
+    top: "10%", left: "5%", size: 170,
+    stars: [[25,10],[72,18],[36,48],[50,50],[64,52],[18,88],[82,82],[50,66]],
+    lines: [[0,2],[1,4],[2,3],[3,4],[2,5],[4,6],[3,7]],
+  },
+  { // Ursa Major / Big Dipper (北斗七星)
+    id: "ursa-major",
+    top: "52%", right: "6%", size: 200,
+    stars: [[6,34],[22,48],[42,58],[60,52],[72,68],[88,74],[54,28]],
+    lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[3,6]],
+  },
+  { // Cassiopeia (カシオペア座)
+    id: "cassiopeia",
+    top: "18%", right: "18%", size: 140,
+    stars: [[8,52],[28,28],[50,56],[72,28],[92,52]],
+    lines: [[0,1],[1,2],[2,3],[3,4]],
+  },
+  { // Cygnus (はくちょう座)
+    id: "cygnus",
+    top: "60%", left: "8%", size: 150,
+    stars: [[50,6],[50,38],[18,40],[82,40],[50,78]],
+    lines: [[0,1],[1,2],[1,3],[1,4]],
+  },
+  { // Lyra (こと座)
+    id: "lyra",
+    top: "32%", left: "48%", size: 75,
+    stars: [[50,8],[28,38],[72,38],[32,82],[68,82]],
+    lines: [[0,1],[0,2],[1,3],[2,4],[3,4]],
+  },
+  { // Corona Borealis (かんむり座)
+    id: "corona",
+    top: "78%", left: "42%", size: 110,
+    stars: [[10,60],[22,38],[38,26],[55,22],[72,28],[85,42],[92,60]],
+    lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]],
+  },
+];
+
+const ConstellationField = () => (
+  <div style={{ position: "fixed", inset: 0, overflow: "hidden", pointerEvents: "none" }} aria-hidden="true">
+    {CONSTELLATIONS.map((c) => (
+      <svg
+        key={c.id}
+        width={c.size} height={c.size}
+        viewBox="0 0 100 100"
+        style={{
+          position: "absolute",
+          top: c.top, left: c.left, right: c.right, bottom: c.bottom,
+          opacity: 0.45,
+        }}
+      >
+        {c.lines.map(([a, b], i) => (
+          <line
+            key={`l${i}`}
+            x1={c.stars[a][0]} y1={c.stars[a][1]}
+            x2={c.stars[b][0]} y2={c.stars[b][1]}
+            stroke="rgba(122,163,212,0.35)"
+            strokeWidth={0.25}
+          />
+        ))}
+        {c.stars.map(([x, y], i) => (
+          <circle
+            key={`s${i}`}
+            cx={x} cy={y} r={1}
+            fill="rgba(200,217,240,0.9)"
+            style={{
+              filter: "drop-shadow(0 0 1.5px rgba(200,217,240,0.6))",
+            }}
+          />
+        ))}
+      </svg>
+    ))}
+  </div>
+);
+
 // ─── Star data — generated ONCE at module level, never re-computed ────────────
 // Uses golden-angle distribution so stars spread evenly without randomness on render
 const STAR_DATA = Array.from({ length: 70 }, (_, i) => ({
@@ -461,6 +540,7 @@ const NightView = ({ onModeSwitch, lang, setLang }) => {
         background: "radial-gradient(ellipse at 30% 20%, #0f1b3d 0%, #060d1f 50%, #010408 100%)", fontFamily: "'Noto Serif JP', Georgia, serif",
       }}
     >
+      <ConstellationField />
       <StarField />
 
       <header style={{ position: "relative", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "32px 20px 16px" }}>
@@ -672,10 +752,44 @@ const MorningView = ({ onModeSwitch, lang, setLang }) => {
 };
 
 // ─── APP ROOT ────────────────────────────────────────────────────────────────
+// Auto-switches: 06:00-20:59 = morning, 21:00-05:59 = night
+const getTimeBasedMode = () => {
+  const h = new Date().getHours();
+  return (h >= 6 && h < 21) ? "morning" : "night";
+};
+
 export default function App() {
-  const [mode, setMode]                   = useState("night");
+  const [mode, setMode]                   = useState(getTimeBasedMode);
   const [transitioning, setTransitioning] = useState(false);
   const [lang, setLang]                   = useState("ja");
+
+  // Schedule switch at the next 6am or 9pm boundary
+  useEffect(() => {
+    let timer;
+    const scheduleNext = () => {
+      const now = new Date();
+      const next = new Date(now);
+      const h = now.getHours();
+      if (h < 6) {
+        next.setHours(6, 0, 0, 0);
+      } else if (h < 21) {
+        next.setHours(21, 0, 0, 0);
+      } else {
+        next.setDate(next.getDate() + 1);
+        next.setHours(6, 0, 0, 0);
+      }
+      timer = setTimeout(() => {
+        setTransitioning(true);
+        setTimeout(() => {
+          setMode(getTimeBasedMode());
+          setTransitioning(false);
+          scheduleNext();
+        }, 280);
+      }, next - now);
+    };
+    scheduleNext();
+    return () => clearTimeout(timer);
+  }, []);
 
   const switchMode = useCallback((next) => {
     setTransitioning(true);
